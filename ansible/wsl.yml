@@ -1,0 +1,14 @@
+- hosts: localhost
+  become: no  # as non root user
+  roles:
+    - wsl
+  vars_prompt:
+    - name: mail
+      prompt: your github mail address
+      confirm: yes
+      private: no
+
+    - name: passphrase
+      prompt: your ssh passphrase (can be blank)
+      confirm: yes
+      private: no

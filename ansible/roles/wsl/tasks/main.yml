@@ -1,0 +1,43 @@
+- name: automate docker startup
+  script: docker_init.sh {{ gists.docker }}
+
+- name: edit sudoes for docker service
+  script: docker_sudo.sh
+
+- name: delete existing ssh key
+  shell: rm ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub
+  ignore_errors: true
+
+- name: generate new ssh key
+  expect:
+    command: ssh-keygen -t ed25519 -C "{{ mail }}"
+    responses:
+      ".*Enter file in which to save the key": "\n"
+      "Enter passphrase": "{{ passphrase }}"
+      "Enter same passphrase": "{{ passphrase }}"
+    echo: true
+
+- name: crate github sub directory in ~/.ssh
+  file:
+    path: ~/.ssh/github
+    state: directory
+    mode: '0700'
+
+- name: move ssh key files
+  shell: mv ~/.ssh/id_ed25519* ~/.ssh/github
+
+- name: install keychain
+  become: true
+  apt:
+    name: keychain
+    state: present
+
+- name: initialize ssh agent when wsl starts
+  script: sshagent_init.sh {{ gists.sshagent }}
+
+- name: add ssh config to read github sub directory
+  shell: curl {{ gists.sshconf }} > ~/.ssh/config
+
+- name: all process completed
+  debug:
+    msg: All installation done. Please don't forget to add your public key in github setting.
