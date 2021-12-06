@@ -38,6 +38,9 @@
 - name: add ssh config to read github sub directory
   shell: curl {{ gists.sshconf }} > ~/.ssh/config
 
+- name: add git config for ssh connection
+  shell: git config --global url.ssh://git@github.com/.insteadOf https://github.com/
+
 - name: all process completed
   debug:
     msg: All installation done. Please don't forget to add your public key in github setting.
