@@ -61,6 +61,10 @@
 - name: Edit sudoes for docker service
   script: docker_sudo.sh
 
+- name: Add user to docker group
+  become: true
+  shell: "usermod -aG docker {{ lookup('env', 'USER') }}"
+
 - name: Delete existing ssh key
   shell: rm ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub
   ignore_errors: true
