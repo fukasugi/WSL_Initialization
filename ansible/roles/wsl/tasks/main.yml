@@ -1,14 +1,66 @@
-- name: automate docker startup
+- name: Copy wsl configuration
+  become: true
+  shell: curl {{ gists.wslconf }} > /etc/wsl.conf
+
+- name: Remove old docker and its dependencies
+  become: true
+  apt:
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    state: absent
+
+- name: Install prerequired packages for docker
+  become: true
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    update_cache: true
+
+- name: Add docker's official GPG (GNU Privacy Guard) key
+  become: true
+  apt_key:
+    url: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+
+- name: Register architecture type
+  shell: dpkg --print-architecture
+  register: architecture
+
+- name: Add docker apt-package repository
+  become: true
+  apt_repository:
+    repo: "deb [arch={{ architecture.stdout }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    update_cache: yes
+
+- name: Install docker, git and python-pexpect
+  become: true
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+      - git
+      - python-pexpect
+    update_cache: true
+
+- name: Automate docker startup
   script: docker_init.sh {{ gists.docker }}
 
-- name: edit sudoes for docker service
+- name: Edit sudoes for docker service
   script: docker_sudo.sh
 
-- name: delete existing ssh key
+- name: Delete existing ssh key
   shell: rm ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub
   ignore_errors: true
 
-- name: generate new ssh key
+- name: Generate new ssh key
   expect:
     command: ssh-keygen -t ed25519 -C "{{ mail }}"
     responses:
@@ -17,30 +69,30 @@
       "Enter same passphrase": "{{ passphrase }}"
     echo: true
 
-- name: crate github sub directory in ~/.ssh
+- name: Create github sub directory in ~/.ssh
   file:
     path: ~/.ssh/github
     state: directory
     mode: '0700'
 
-- name: move ssh key files
+- name: Move ssh key files
   shell: mv ~/.ssh/id_ed25519* ~/.ssh/github
 
-- name: install keychain
+- name: Install keychain
   become: true
   apt:
     name: keychain
     state: present
 
-- name: initialize ssh agent when wsl starts
+- name: Initialize ssh agent when wsl starts
   script: sshagent_init.sh {{ gists.sshagent }}
 
-- name: add ssh config to read github sub directory
+- name: Add ssh config to read github sub directory
   shell: curl {{ gists.sshconf }} > ~/.ssh/config
 
-- name: add git config for ssh connection
+- name: Add git config for ssh connection
   shell: git config --global url.ssh://git@github.com/.insteadOf https://github.com/
 
-- name: all process completed
+- name: All process completed
   debug:
     msg: All installation done. Please don't forget to add your public key in github setting.

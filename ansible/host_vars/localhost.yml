@@ -1,4 +1,5 @@
 gists:
   docker: https://gist.githubusercontent.com/fukasugi/227d6e1475ee40316872f8d267cd357b/raw/1af195ef73f1d86adb855dd12b016db731e94476/.bashrc_docker
   sshagent: https://gist.githubusercontent.com/fukasugi/227d6e1475ee40316872f8d267cd357b/raw/fadbccf2c73cea6b64027be23af4565e9f3f058b/.bashrc_sshagent
-  sshconf: https://gist.githubusercontent.com/fukasugi/227d6e1475ee40316872f8d267cd357b/raw/fadbccf2c73cea6b64027be23af4565e9f3f058b/.ssh_config
+  sshconf: https://gist.githubusercontent.com/fukasugi/227d6e1475ee40316872f8d267cd357b/raw/d4e927e67195bad64f560100300ff0ea25c38848/ssh_config
+  wslconf: https://gist.githubusercontent.com/fukasugi/227d6e1475ee40316872f8d267cd357b/raw/d4e927e67195bad64f560100300ff0ea25c38848/wsl.conf

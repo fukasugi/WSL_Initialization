@@ -20,7 +20,7 @@ sudo apt install ansible
 1. Run ansible playbook
 ```
 cd ansible
-ansible-playbook wsl.yml
+ansible-playbook wsl.yml --ask-become-pass
 ```
 
 2. Input your user information  
