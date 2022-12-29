@@ -1,3 +1,13 @@
+- name: Install prerequired packages
+  become: true
+  apt:
+    name:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    update_cache: true
+
 - name: Copy wsl configuration
   become: true
   shell: curl {{ gists.wslconf }} > /etc/wsl.conf
@@ -12,16 +22,6 @@
       - containerd
       - runc
     state: absent
-
-- name: Install prerequired packages for docker
-  become: true
-  apt:
-    name:
-      - ca-certificates
-      - curl
-      - gnupg
-      - lsb-release
-    update_cache: true
 
 - name: Add docker's official GPG (GNU Privacy Guard) key
   become: true
@@ -38,7 +38,7 @@
     repo: "deb [arch={{ architecture.stdout }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
     update_cache: yes
 
-- name: Install docker, git and python-pexpect
+- name: Install docker and other important packages
   become: true
   apt:
     name:
@@ -46,9 +46,14 @@
       - docker-ce-cli
       - containerd.io
       - docker-compose-plugin
-      - git
-      - python-pexpect
+      - build-essential
+      - python3-pip
     update_cache: true
+
+- name: Install python pexpect
+  become: true
+  pip:
+    name: pexpect
 
 - name: Automate docker startup
   script: docker_init.sh {{ gists.docker }}
