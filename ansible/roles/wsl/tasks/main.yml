@@ -52,8 +52,9 @@
 
 - name: Install python pexpect
   become: true
-  pip:
-    name: pexpect
+  apt:
+    name: python3-pexpect
+    update_cache: true
 
 - name: Automate docker startup
   script: docker_init.sh {{ gists.docker }}

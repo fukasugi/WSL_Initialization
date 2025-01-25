@@ -1,4 +1,10 @@
-# Wsl 2 initial ssh setup for github
+# Wsl 2 initial setup for github and dev environment
+
+## What this project does?
+* Install fundamental apt packages
+* Setup docker engine
+* Setup ssh configuration
+* Setup wsl configuration
 
 ## Wsl distros
 This setup were confiremed in
